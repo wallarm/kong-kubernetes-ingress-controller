@@ -132,6 +132,15 @@ type KongIngressRoute struct {
 
 	// ResponseBuffering sets whether to enable response body buffering or not.
 	ResponseBuffering *bool `json:"response_buffering,omitempty" yaml:"response_buffering,omitempty"`
+
+	// Wallarm configuration options.
+	// https://docs.wallarm.com/admin-en/configure-parameters-en/
+	WallarmMode              *string `json:"wallarm_mode,omitempty" yaml:"wallarm_mode,omitempty"`
+	WallarmApplication       *int    `json:"wallarm_application,omitempty" yaml:"wallarm_application,omitempty"`
+	WallarmParseResponse     *bool   `json:"wallarm_parse_response,omitempty" yaml:"wallarm_parse_response,omitempty"`
+	WallarmParseWebsocket    *bool   `json:"wallarm_parse_websocket,omitempty" yaml:"wallarm_parse_websocket,omitempty"`
+	WallarmUnpackResponse    *bool   `json:"wallarm_unpack_response,omitempty" yaml:"wallarm_unpack_response,omitempty"`
+	WallarmPartnerClientUUID *string `json:"wallarm_partner_client_uuid,omitempty" yaml:"wallarm_partner_client_uuid,omitempty"`
 }
 
 // KongIngressUpstream contains KongIngress upstream configuration
