@@ -1,11 +1,4 @@
-[![][kong-logo]][kong-url]
-[![Build Status](https://github.com/kong/kubernetes-ingress-controller/workflows/Test/badge.svg)](https://github.com/kong/kubernetes-ingress-controller/actions?query=branch%3Amaster+event%3Apush)
-[![Go Reference](https://pkg.go.dev/badge/github.com/kong/kubernetes-ingress-controller/v2.svg)](https://pkg.go.dev/github.com/kong/kubernetes-ingress-controller/v2)
-[![Codecov](https://codecov.io/gh/Kong/kubernetes-ingress-controller/branch/main/graph/badge.svg?token=S1aqcXiGEo)](https://codecov.io/gh/Kong/kubernetes-ingress-controller)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Kong/kong/blob/master/LICENSE)
-[![Twitter](https://img.shields.io/twitter/follow/thekonginc.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=thekonginc)
-
-# Kong Ingress Controller for Kubernetes (KIC)
+# Kong Ingress Controller for Kubernetes (KIC) with Wallarm modules
 
 Use [Kong][kong] for Kubernetes [Ingress][ingress].
 Configure [plugins][docs-konghq-hub], health checking,
@@ -41,15 +34,13 @@ a hosted Kubernetes service like [GKE](https://cloud.google.com/kubernetes-engin
 Setting up Kong for Kubernetes is as simple as:
 
 ```shell
-# using YAMLs
-$ kubectl apply -f https://bit.ly/k4k8s
-
 # or using Helm
-$ helm repo add kong https://charts.konghq.com
+$ helm repo add wallarm https://charts.wallarm.com
 $ helm repo update
 
 # Helm 3
-$ helm install kong/kong --generate-name --set ingressController.installCRDs=false
+$ helm install --version 4.2.3 --set ingressController.installCRDs=false <INGRESS_CONTROLLER_NAME> wallarm/kong -n <KUBERNETES_NAMESPACE> -f <PATH_TO_VALUES>
+
 ```
 
 Once installed, please follow the [Getting Started guide][docs-konghq-getting-started-guide]
@@ -63,12 +54,11 @@ to start using Ingress in your Kubernetes cluster.
 ### Release images
 
 Release builds of Kong Ingress Controller can be found on Docker Hub in
-[kong/kubernetes-ingress-controller repository][dockerhub-kic].
+[wallarm/kong-kubernetes-ingress-controller repository][dockerhub-kic].
 
 At the moment we're providing images for:
 
 - Linux `amd64`
-- Linux `arm64`
 
 ### `main` branch builds
 
@@ -113,6 +103,8 @@ For a feature request, please open an issue using the feature request template.
 You can also talk to the developers behind Kong in the
 [#kong][slack-kubernetes-kong] channel on the Kubernetes Slack server.
 
+Wallarm documentation is available [here](https://docs.wallarm.com/installation/kubernetes/kong-ingress-controller/deployment/).
+
 ### Community meetings
 
 You can join monthly meetups hosted by [Kong](https://konghq.com) to ask questions, provide feedback, or just to listen and hang out.
@@ -137,7 +129,7 @@ preview features can be found in [FEATURE_PREVIEW_DOCUMENTATION.md][fpreview].
 [k8s-io-tools]: https://kubernetes.io/docs/tasks/tools/
 [slack-Kubernetes-kong]: https://kubernetes.slack.com/messages/kong
 
-[dockerhub-kic]: https://hub.docker.com/r/kong/kubernetes-ingress-controller
+[dockerhub-kic]: https://hub.docker.com/r/wallarm/kong-kubernetes-ingress-controller-preview
 [dockerhub-kic-nightly]: https://hub.docker.com/r/kong/nightly-ingress-controller
 
 [github-kic-discussions]: https://github.com/Kong/kubernetes-ingress-controller/discussions
