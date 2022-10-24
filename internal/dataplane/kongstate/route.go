@@ -228,6 +228,12 @@ func (r *Route) overrideByAnnotation(log logrus.FieldLogger) {
 	r.overrideRequestBuffering(log, r.Ingress.Annotations)
 	r.overrideResponseBuffering(log, r.Ingress.Annotations)
 	r.overrideHosts(log, r.Ingress.Annotations)
+	r.overrideWallarmMode(log, r.Ingress.Annotations)
+	r.overrideWallarmApplication(log, r.Ingress.Annotations)
+	r.overrideWallarmParseResponse(log, r.Ingress.Annotations)
+	r.overrideWallarmParseWebsocket(log, r.Ingress.Annotations)
+	r.overrideWallarmUnpackResponse(log, r.Ingress.Annotations)
+	r.overrideWallarmPartnerClientUUID(log, r.Ingress.Annotations)
 }
 
 // override sets Route fields by KongIngress first, then by annotation.
@@ -331,6 +337,24 @@ func (r *Route) overrideByKongIngress(log logrus.FieldLogger, kongIngress *confi
 	if ir.ResponseBuffering != nil {
 		r.ResponseBuffering = kong.Bool(*ir.ResponseBuffering)
 	}
+	if ir.WallarmMode != nil {
+		r.WallarmMode = kong.String(*ir.WallarmMode)
+	}
+	if ir.WallarmApplication != nil {
+		r.WallarmApplication = kong.Int(*ir.WallarmApplication)
+	}
+	if ir.WallarmParseResponse != nil {
+		r.WallarmParseResponse = kong.Bool(*ir.WallarmParseResponse)
+	}
+	if ir.WallarmParseWebsocket != nil {
+		r.WallarmParseWebsocket = kong.Bool(*ir.WallarmParseWebsocket)
+	}
+	if ir.WallarmUnpackResponse != nil {
+		r.WallarmUnpackResponse = kong.Bool(*ir.WallarmUnpackResponse)
+	}
+	if ir.WallarmPartnerClientUUID != nil {
+		r.WallarmPartnerClientUUID = kong.String(*ir.WallarmPartnerClientUUID)
+	}
 }
 
 // overrideRequestBuffering ensures defaults for the request_buffering option.
@@ -367,6 +391,74 @@ func (r *Route) overrideResponseBuffering(log logrus.FieldLogger, anns map[strin
 	}
 
 	r.ResponseBuffering = kong.Bool(isEnabled)
+}
+
+//
+func (r *Route) overrideWallarmMode(log logrus.FieldLogger, anns map[string]string) {
+	annotationValue := annotations.ExtractWallarmMode(anns)
+	r.WallarmMode = kong.String(annotationValue)
+}
+
+func (r *Route) overrideWallarmApplication(log logrus.FieldLogger, anns map[string]string) {
+	annotationValue, exists := annotations.ExtractWallarmApplication(anns)
+	if !exists {
+		return
+	}
+	applicationId, err := strconv.Atoi(annotationValue)
+	if err != nil {
+		return
+	}
+	r.WallarmApplication = kong.Int(applicationId)
+}
+
+func (r *Route) overrideWallarmParseResponse(log logrus.FieldLogger, anns map[string]string) {
+	annotationValue, exists := annotations.ExtractWallarmParseResponse(anns)
+	if !exists {
+		return
+	}
+	value, err := strconv.ParseBool(strings.ToLower(annotationValue))
+	if err != nil {
+		log.WithField("kongroute", r.Name).Errorf("invalid wallarm_parse_response value: %s", err)
+		return
+	}
+
+	r.WallarmParseResponse = kong.Bool(value)
+}
+
+func (r *Route) overrideWallarmParseWebsocket(log logrus.FieldLogger, anns map[string]string) {
+	annotationValue, exists := annotations.ExtractWallarmParseWebsocket(anns)
+	if !exists {
+		return
+	}
+	value, err := strconv.ParseBool(strings.ToLower(annotationValue))
+	if err != nil {
+		log.WithField("kongroute", r.Name).Errorf("invalid wallarm_parse_websocket value: %s", err)
+		return
+	}
+
+	r.WallarmParseWebsocket = kong.Bool(value)
+}
+
+func (r *Route) overrideWallarmUnpackResponse(log logrus.FieldLogger, anns map[string]string) {
+	annotationValue, exists := annotations.ExtractWallarmUnpackResponse(anns)
+	if !exists {
+		return
+	}
+	value, err := strconv.ParseBool(strings.ToLower(annotationValue))
+	if err != nil {
+		log.WithField("kongroute", r.Name).Errorf("invalid wallarm_unpack_response value: %s", err)
+		return
+	}
+
+	r.WallarmUnpackResponse = kong.Bool(value)
+}
+
+func (r *Route) overrideWallarmPartnerClientUUID(log logrus.FieldLogger, anns map[string]string) {
+	annotationValue, exists := annotations.ExtractWallarmPartnerClientUUID(anns)
+	if !exists {
+		return
+	}
+	r.WallarmPartnerClientUUID = kong.String(annotationValue)
 }
 
 // overrideHosts appends Host-Aliases to Hosts.

@@ -37,7 +37,8 @@ const (
 	KnativeIngressClassKey           = "networking.knative.dev/ingress-class"
 	KnativeIngressClassDeprecatedKey = "networking.knative.dev/ingress.class"
 
-	AnnotationPrefix = "konghq.com"
+	AnnotationPrefix        = "konghq.com"
+	WallarmAnnotationPrefix = "wallarm.com"
 
 	ConfigurationKey     = "/override"
 	PluginsKey           = "/plugins"
@@ -56,6 +57,13 @@ const (
 	ResponseBuffering    = "/response-buffering"
 	HostAliasesKey       = "/host-aliases"
 	RegexPrefixKey       = "/regex-prefix"
+
+	WallarmMode              = "/wallarm-mode"
+	WallarmApplication       = "/wallarm-application"
+	WallarmParseResponse     = "/wallarm-parse-response"
+	WallarmParseWebsocket    = "/wallarm-parse-websocket"
+	WallarmUnpackResponse    = "/wallarm-unpack-response"
+	WallarmPartnerClientUUID = "/wallarm-partner-client-uuid"
 
 	// GatewayClassUnmanagedAnnotationSuffix is an annotation used on a Gateway resource to
 	// indicate that the GatewayClass should be reconciled according to unmanaged
@@ -239,6 +247,40 @@ func ExtractRequestBuffering(anns map[string]string) (string, bool) {
 func ExtractResponseBuffering(anns map[string]string) (string, bool) {
 	s, ok := anns[AnnotationPrefix+ResponseBuffering]
 	return s, ok
+}
+
+// Extract wallarm mode annotation.
+func ExtractWallarmMode(anns map[string]string) string {
+	val, exists := anns[WallarmAnnotationPrefix+WallarmMode]
+	if !exists {
+		return "off"
+	}
+	return val
+}
+
+func ExtractWallarmApplication(anns map[string]string) (string, bool) {
+	val, exists := anns[WallarmAnnotationPrefix+WallarmApplication]
+	return val, exists
+}
+
+func ExtractWallarmParseResponse(anns map[string]string) (string, bool) {
+	val, exists := anns[WallarmAnnotationPrefix+WallarmParseResponse]
+	return val, exists
+}
+
+func ExtractWallarmParseWebsocket(anns map[string]string) (string, bool) {
+	val, exists := anns[WallarmAnnotationPrefix+WallarmParseWebsocket]
+	return val, exists
+}
+
+func ExtractWallarmUnpackResponse(anns map[string]string) (string, bool) {
+	val, exists := anns[WallarmAnnotationPrefix+WallarmUnpackResponse]
+	return val, exists
+}
+
+func ExtractWallarmPartnerClientUUID(anns map[string]string) (string, bool) {
+	val, exists := anns[WallarmAnnotationPrefix+WallarmPartnerClientUUID]
+	return val, exists
 }
 
 // ExtractHostAliases extracts the host-aliases annotation value.
